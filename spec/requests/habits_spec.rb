@@ -80,4 +80,43 @@ RSpec.describe "Habits", type: :request do
       end
     end
   end
+
+  describe "DELETE /habits/:id" do
+    context "when user is authenticated" do
+      let(:user) { create(:user) }
+      let!(:habit) { create(:habit, user: user, title: "Test habit") }
+
+      before { sign_in user }
+
+      it "deletes the habit" do
+        expect {
+          delete habit_path(habit)
+        }.to change(Habit, :count).by(-1)
+
+        expect(response).to redirect_to(habits_path)
+        expect(flash[:notice]).to eq("Habit deleted successfully!")
+      end
+
+      it "only allows users to delete their own habits" do
+        other_user = create(:user)
+        other_habit = create(:habit, user: other_user, title: "Other user's habit")
+
+        expect {
+          delete habit_path(other_habit)
+        }.not_to change(Habit, :count)
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "when user is not authenticated" do
+      let!(:habit) { create(:habit, title: "Test habit") }
+
+      it "redirects to sign in page" do
+        delete habit_path(habit)
+
+        expect(response).to redirect_to(signin_path)
+      end
+    end
+  end
 end

@@ -1,0 +1,4 @@
+<%= turbo_stream.remove "habit_#{@habit.id}" %>
+<%= turbo_stream.update "flash" do %>
+  <%= render "layouts/flash" %>
+<% end %> 

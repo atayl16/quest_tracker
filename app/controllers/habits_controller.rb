@@ -1,5 +1,6 @@
 class HabitsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_habit, only: [ :destroy ]
 
   def index
     # For now, get habits for the current_user (stubbed in tests)
@@ -18,7 +19,23 @@ class HabitsController < ApplicationController
     end
   end
 
+  def destroy
+    if @habit.user == current_user
+      @habit.destroy
+      respond_to do |format|
+        format.html { redirect_to habits_path, notice: "Habit deleted successfully!" }
+        format.turbo_stream { flash.now[:notice] = "Habit deleted successfully!" }
+      end
+    else
+      head :not_found
+    end
+  end
+
   private
+
+  def set_habit
+    @habit = Habit.find(params[:id])
+  end
 
   def habit_params
     params.require(:habit).permit(:title)

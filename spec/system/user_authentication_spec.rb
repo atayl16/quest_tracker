@@ -56,4 +56,28 @@ RSpec.describe "User Authentication", type: :system do
       expect(page).to have_content("Title can't be blank")
     end
   end
+
+  describe "habit deletion" do
+    let!(:habit) { create(:habit, user: user, title: "Test habit to delete") }
+
+    before do
+      # Sign in through the UI
+      visit signin_path
+      fill_in "Username", with: user.username
+      fill_in "Password", with: user.password
+      click_button "Continue Your Quest"
+      expect(page).to have_current_path(habits_path)
+    end
+
+    it "allows user to delete a habit" do
+      expect(page).to have_content("Test habit to delete")
+
+      accept_confirm do
+        click_button "Delete"
+      end
+
+      expect(page).to have_content("Habit deleted successfully!")
+      expect(page).not_to have_content("Test habit to delete")
+    end
+  end
 end

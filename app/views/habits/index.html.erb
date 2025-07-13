@@ -85,6 +85,10 @@
                             <% end %>
                           </div>
                         <% end %>
+                        <!-- Delete button for habit owner -->
+                        <% if habit.user == current_user && habit.persisted? %>
+                          <%= button_to "Delete", habit_path(habit), method: :delete, data: { turbo_confirm: "Are you sure?" }, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
+                        <% end %>
                       </div>
                     </div>
 

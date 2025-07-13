@@ -44,3 +44,5 @@
     </div>
   </div>
 <% end %> 
+
+<%= turbo_stream.remove "habit_#{@habit.id}" if defined?(@deleted) && @deleted %> 
