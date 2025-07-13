@@ -2,23 +2,23 @@ require "rails_helper"
 
 RSpec.describe User, type: :model do
   it "is valid with a username and password" do
-    user = User.new(username: "alice", password: "password123", password_confirmation: "password123")
+    user = build(:user)
     expect(user).to be_valid
   end
 
   it "is invalid without a username" do
-    user = User.new(username: nil, password: "password123", password_confirmation: "password123")
+    user = build(:user, username: nil)
     expect(user).not_to be_valid
   end
 
   it "is invalid without a password" do
-    user = User.new(username: "alice", password: nil, password_confirmation: nil)
+    user = build(:user, password: nil, password_confirmation: nil)
     expect(user).not_to be_valid
   end
 
   it "is invalid with a duplicate username" do
-    User.create!(username: "alice", password: "password123", password_confirmation: "password123")
-    user = User.new(username: "alice", password: "password456", password_confirmation: "password456")
+    create(:user, username: "alice")
+    user = build(:user, username: "alice")
     expect(user).not_to be_valid
   end
 end
