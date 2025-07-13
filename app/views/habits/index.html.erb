@@ -1,18 +1,18 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
   <div class="container mx-auto px-4 py-8">
     <!-- Header Section -->
-    <div class="text-center mb-12">
+    <header class="text-center mb-12">
       <h1 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
         Quest Tracker
       </h1>
       <p class="text-slate-300 text-lg">Your personal journey to building better habits</p>
-    </div>
+    </header>
 
     <!-- Habits Section -->
-    <div class="max-w-4xl mx-auto">
+    <main class="max-w-4xl mx-auto">
       <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8">
         <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
-          <span class="text-purple-400 mr-3">⚔️</span>
+          <span class="text-purple-400 mr-3" aria-hidden="true">⚔️</span>
           My Active Quests
         </h2>
         
@@ -35,7 +35,7 @@
           </div>
         <% else %>
           <div class="text-center py-12">
-            <div class="text-6xl mb-4">🏰</div>
+            <div class="text-6xl mb-4" role="img" aria-label="Castle">🏰</div>
             <h3 class="text-xl font-medium text-slate-300 mb-2">No active quests yet</h3>
             <p class="text-slate-400 mb-6">Start your journey by creating your first habit quest!</p>
             <button class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105">
@@ -44,11 +44,11 @@
           </div>
         <% end %>
       </div>
-    </div>
+    </main>
 
     <!-- Footer -->
-    <div class="text-center mt-12">
+    <footer class="text-center mt-12">
       <p class="text-slate-500 text-sm">Level up your life, one habit at a time</p>
-    </div>
+    </footer>
   </div>
 </div> 
