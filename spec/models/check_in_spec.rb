@@ -14,6 +14,18 @@ RSpec.describe CheckIn, type: :model do
   end
 
   describe "validations" do
+    it "validates presence of user" do
+      check_in = build(:check_in, user: nil)
+      expect(check_in).not_to be_valid
+      expect(check_in.errors[:user]).to include("can't be blank")
+    end
+
+    it "validates presence of habit" do
+      check_in = build(:check_in, habit: nil)
+      expect(check_in).not_to be_valid
+      expect(check_in.errors[:habit]).to include("can't be blank")
+    end
+
     it "validates presence of checked_in_at" do
       check_in = build(:check_in, checked_in_at: nil)
       expect(check_in).not_to be_valid

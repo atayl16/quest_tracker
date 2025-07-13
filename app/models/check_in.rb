@@ -2,6 +2,8 @@ class CheckIn < ApplicationRecord
   belongs_to :user
   belongs_to :habit
 
+  validates :user, presence: true
+  validates :habit, presence: true
   validates :checked_in_at, presence: true
   validates :checked_in_at, uniqueness: { scope: [ :user_id, :habit_id ] }
 
