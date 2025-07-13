@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_13_134259) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_13_153259) do
+  create_table "check_ins", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "habit_id", null: false
+    t.datetime "checked_in_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["habit_id"], name: "index_check_ins_on_habit_id"
+    t.index ["user_id"], name: "index_check_ins_on_user_id"
+  end
+
   create_table "habits", force: :cascade do |t|
     t.string "title", null: false
     t.integer "user_id", null: false
@@ -27,5 +37,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_134259) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "check_ins", "habits"
+  add_foreign_key "check_ins", "users"
   add_foreign_key "habits", "users"
 end
