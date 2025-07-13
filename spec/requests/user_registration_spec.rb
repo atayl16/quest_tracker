@@ -16,8 +16,8 @@ RSpec.describe "User Registration", type: :request do
         user_params = {
           user: {
             username: "testuser",
-            password: "password123",
-            password_confirmation: "password123"
+            password: DEFAULT_PASSWORD,
+            password_confirmation: DEFAULT_PASSWORD
           }
         }
 
@@ -38,7 +38,7 @@ RSpec.describe "User Registration", type: :request do
         user_params = {
           user: {
             username: "",
-            password: "password123",
+            password: DEFAULT_PASSWORD,
             password_confirmation: "different"
           }
         }

@@ -20,7 +20,7 @@ RSpec.describe "User Authentication", type: :system do
 
       # Fill in the sign in form
       fill_in "Username", with: user.username
-      fill_in "Password", with: "password123"
+      fill_in "Password", with: DEFAULT_PASSWORD
       click_button "Continue Your Quest"
 
       # Should be redirected to habits index
@@ -36,7 +36,7 @@ RSpec.describe "User Authentication", type: :system do
 
       visit signin_path
       fill_in "Username", with: user_without_habits.username
-      fill_in "Password", with: "password123"
+      fill_in "Password", with: DEFAULT_PASSWORD
       click_button "Continue Your Quest"
 
       expect(page).to have_content("Welcome back, newbie!")

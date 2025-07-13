@@ -17,7 +17,7 @@ RSpec.describe "User Authentication", type: :request do
       it "signs in the user and redirects to root" do
         post signin_path, params: {
           username: user.username,
-          password: "password123"
+          password: DEFAULT_PASSWORD
         }
 
         expect(response).to redirect_to(root_path)
@@ -32,7 +32,7 @@ RSpec.describe "User Authentication", type: :request do
       it "does not sign in and shows error message" do
         post signin_path, params: {
           username: "nonexistent",
-          password: "password123"
+          password: DEFAULT_PASSWORD
         }
 
         expect(response).to have_http_status(:unprocessable_entity)
@@ -60,7 +60,7 @@ RSpec.describe "User Authentication", type: :request do
       # Sign in first
       post signin_path, params: {
         username: user.username,
-        password: "password123"
+        password: DEFAULT_PASSWORD
       }
 
       # Then sign out
