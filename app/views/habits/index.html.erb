@@ -1,0 +1,11 @@
+<h1>My Habits</h1>
+
+<% if @habits.any? %>
+  <ul>
+    <% @habits.each do |habit| %>
+      <li><%= habit.title %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No habits yet. Start building your quest log!</p>
+<% end %> 
