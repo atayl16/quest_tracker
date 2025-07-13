@@ -6,6 +6,9 @@
         Quest Tracker
       </h1>
       <p class="text-slate-300 text-lg">Your personal journey to building better habits</p>
+      <% if signed_in? %>
+        <p class="text-purple-300 text-sm mt-2">Welcome back, <%= current_user.username %>!</p>
+      <% end %>
     </header>
 
     <!-- Habits Section -->
