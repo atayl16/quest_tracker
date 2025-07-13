@@ -39,12 +39,4 @@ class Habit < ApplicationRecord
   def completed_today?
     check_ins.for_date(Date.current).exists?
   end
-
-  def completion_rate
-    return 0 if check_ins.empty?
-
-    total_days = (Date.current - created_at.to_date).to_i + 1
-    completed_days = check_ins.count
-    ((completed_days.to_f / total_days) * 100).round(1)
-  end
 end
