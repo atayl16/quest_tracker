@@ -17,13 +17,13 @@ RSpec.describe CheckIn, type: :model do
     it "validates presence of user" do
       check_in = build(:check_in, user: nil)
       expect(check_in).not_to be_valid
-      expect(check_in.errors[:user]).to include("can't be blank")
+      expect(check_in.errors[:user]).to include("must exist")
     end
 
     it "validates presence of habit" do
       check_in = build(:check_in, habit: nil)
       expect(check_in).not_to be_valid
-      expect(check_in.errors[:habit]).to include("can't be blank")
+      expect(check_in.errors[:habit]).to include("must exist")
     end
 
     it "validates presence of checked_in_at" do
@@ -32,16 +32,34 @@ RSpec.describe CheckIn, type: :model do
       expect(check_in.errors[:checked_in_at]).to include("can't be blank")
     end
 
-    it "validates uniqueness of checked_in_at scoped to user and habit" do
+    it "validates uniqueness of check-ins per day scoped to user and habit" do
       user = create(:user)
       habit = create(:habit, user: user)
-      time = Time.current
+      today = Date.current
 
-      create(:check_in, user: user, habit: habit, checked_in_at: time)
-      duplicate_check_in = build(:check_in, user: user, habit: habit, checked_in_at: time)
+      # Create a check-in for today at 9 AM
+      create(:check_in, user: user, habit: habit, checked_in_at: today.beginning_of_day + 9.hours)
+
+      # Try to create another check-in for the same day at 6 PM
+      duplicate_check_in = build(:check_in, user: user, habit: habit, checked_in_at: today.beginning_of_day + 18.hours)
 
       expect(duplicate_check_in).not_to be_valid
-      expect(duplicate_check_in.errors[:checked_in_at]).to include("has already been taken")
+      expect(duplicate_check_in.errors[:checked_in_at]).to include("You have already checked in for this habit today")
+    end
+
+    it "allows check-ins on different days for the same user and habit" do
+      user = create(:user)
+      habit = create(:habit, user: user)
+      today = Date.current
+      yesterday = 1.day.ago.to_date
+
+      # Create a check-in for yesterday
+      create(:check_in, user: user, habit: habit, checked_in_at: yesterday.beginning_of_day + 10.hours)
+
+      # Create a check-in for today (should be valid)
+      today_check_in = build(:check_in, user: user, habit: habit, checked_in_at: today.beginning_of_day + 10.hours)
+
+      expect(today_check_in).to be_valid
     end
   end
 
