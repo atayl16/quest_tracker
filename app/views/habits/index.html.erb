@@ -22,18 +22,39 @@
         <% if @habits.any? %>
           <div class="space-y-4">
             <% @habits.each do |habit| %>
-              <div class="bg-slate-700/30 rounded-xl p-6 border border-slate-600/30 hover:border-purple-500/50 transition-all duration-300">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <div class="w-3 h-3 bg-purple-500 rounded-full mr-4"></div>
-                    <h3 class="text-lg font-medium text-white"><%= habit.title %></h3>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-slate-400">In Progress</span>
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <%= turbo_frame_tag "habit_#{habit.id}" do %>
+                <div class="bg-slate-700/30 rounded-xl p-6 border border-slate-600/30 hover:border-purple-500/50 transition-all duration-300">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-purple-500 rounded-full mr-4"></div>
+                      <h3 class="text-lg font-medium text-white"><%= habit.title %></h3>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                      <% if habit.check_ins.for_date(Date.current).exists? %>
+                        <!-- Already completed today -->
+                        <div class="flex items-center space-x-2">
+                          <span class="text-sm text-green-400 font-medium">✅ Completed Today!</span>
+                          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        </div>
+                      <% else %>
+                        <!-- Not completed today - show check-in button -->
+                        <div class="flex items-center space-x-3">
+                          <span class="text-sm text-slate-400">Ready to complete</span>
+                          <%= form_with url: habit_check_ins_path(habit), method: :post, local: false, class: "inline" do |form| %>
+                            <%= form.submit "Complete Quest", 
+                                class: "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 text-sm",
+                                data: { 
+                                  turbo_method: :post,
+                                  turbo_frame: "habit_#{habit.id}"
+                                } %>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
-              </div>
+              <% end %>
             <% end %>
           </div>
         <% else %>

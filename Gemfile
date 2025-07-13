@@ -14,6 +14,9 @@ gem "kamal", require: false
 gem "thruster", require: false
 gem "tailwindcss-rails"
 gem "bcrypt", "~> 3.1.7"
+gem "importmap-rails"
+gem "turbo-rails"
+gem "stimulus-rails"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
