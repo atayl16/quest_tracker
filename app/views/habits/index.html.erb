@@ -1,0 +1,16 @@
+<div class="max-w-2xl mx-auto py-8">
+  <h1 class="text-3xl font-bold text-center mb-6 text-yellow-800 drop-shadow">My Quest Log</h1>
+  <div class="bg-white/80 rounded-lg shadow p-6">
+    <% if @habits.any? %>
+      <ul class="divide-y divide-yellow-200">
+        <% @habits.each do |habit| %>
+          <li class="py-4 flex items-center">
+            <span class="text-lg text-gray-900 font-medium"><%= habit.title %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-gray-500 italic text-center">No quests yet. Begin your adventure by adding a new quest!</p>
+    <% end %>
+  </div>
+</div>
