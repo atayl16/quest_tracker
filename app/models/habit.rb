@@ -39,4 +39,15 @@ class Habit < ApplicationRecord
   def completed_today?
     check_ins.for_date(Date.current).exists?
   end
+
+  # Get today's check-in for a specific user
+  # This method works with preloaded check_ins to avoid N+1 queries
+  def todays_check_in_for_user(user)
+    return nil unless user
+
+    check_ins.find { |check_in|
+      check_in.user_id == user.id &&
+      check_in.checked_in_at.to_date == Date.current
+    }
+  end
 end
