@@ -12,4 +12,8 @@ class ApplicationController < ActionController::Base
     !!current_user
   end
   helper_method :signed_in?
+
+  def authenticate_user!
+    redirect_to signin_path unless signed_in?
+  end
 end
