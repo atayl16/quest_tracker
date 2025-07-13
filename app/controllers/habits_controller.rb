@@ -6,6 +6,11 @@ class HabitsController < ApplicationController
     # For now, get habits for the current_user (stubbed in tests)
     # Later this will be the authenticated user from sessions
     @habits = (current_user&.habits || []).includes(:check_ins)
+
+    # Render React version if ui=react parameter is present
+    if params[:ui] == "react"
+      render "react_index"
+    end
   end
 
   def create
@@ -20,21 +25,17 @@ class HabitsController < ApplicationController
   end
 
   def destroy
-    if @habit.user == current_user
-      @habit.destroy
-      respond_to do |format|
-        format.html { redirect_to habits_path, notice: "Habit deleted successfully!" }
-        format.turbo_stream { flash.now[:notice] = "Habit deleted successfully!" }
-      end
-    else
-      head :not_found
+    @habit.destroy
+    respond_to do |format|
+      format.html { redirect_to habits_path, notice: "Habit deleted successfully!" }
+      format.turbo_stream { flash.now[:notice] = "Habit deleted successfully!" }
     end
   end
 
   private
 
   def set_habit
-    @habit = Habit.find(params[:id])
+    @habit = current_user.habits.find(params[:id])
   end
 
   def habit_params

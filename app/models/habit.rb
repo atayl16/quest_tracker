@@ -4,12 +4,21 @@ class Habit < ApplicationRecord
   validates :title, presence: true
 
   def current_streak
+    # Get all check-in dates, sorted descending
+    dates = check_ins.pluck(:checked_in_at).map(&:to_date).sort.reverse
+    return 0 if dates.empty?
+
     streak = 0
     current_date = Date.current
 
-    while check_ins.for_date(current_date).exists?
-      streak += 1
-      current_date -= 1.day
+    dates.each do |date|
+      if date == current_date
+        streak += 1
+        current_date -= 1.day
+      elsif date < current_date
+        break
+      end
+      # If date > current_date, just skip (shouldn't happen with unique dates)
     end
 
     streak

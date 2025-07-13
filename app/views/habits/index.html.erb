@@ -19,7 +19,7 @@
         </h2>
 
         <!-- Add New Habit Form -->
-        <div class="mb-8 p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30">
+        <div class="mb-8 p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30" id="new-habit-form">
           <h3 class="text-lg font-medium text-white mb-4 flex items-center">
             <span class="text-green-400 mr-2" aria-hidden="true">✨</span>
             Add New Quest
@@ -132,10 +132,11 @@
             <div class="text-4xl sm:text-6xl mb-4" role="img" aria-label="Castle">🏰</div>
             <h3 class="text-lg sm:text-xl font-medium text-slate-300 mb-2">No active quests yet</h3>
             <p class="text-slate-400 mb-6 text-sm sm:text-base">Start your journey by creating your first habit quest!</p>
-            <button class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
-                    aria-label="Begin your first quest">
+            <a href="#new-habit-form"
+               class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
+               aria-label="Begin your first quest">
               Begin Your Quest
-            </button>
+            </a>
           </div>
         <% end %>
       </div>

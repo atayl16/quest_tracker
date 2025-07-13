@@ -45,15 +45,15 @@ RSpec.describe "User Authentication", type: :system do
       fill_in "habit_title", with: "Drink 8 glasses of water"
       click_button "Create Habit"
 
-      expect(page).to have_content("Habit created successfully!")
-      expect(page).to have_content("Drink 8 glasses of water")
+      expect(page).to have_content("Habit created successfully!", wait: 5)
+      expect(page).to have_content("Drink 8 glasses of water", wait: 5)
     end
 
     it "shows error when creating habit with empty title" do
       fill_in "habit_title", with: ""
       click_button "Create Habit"
 
-      expect(page).to have_content("Title can't be blank")
+      expect(page).to have_content("Title can't be blank", wait: 5)
     end
   end
 
@@ -76,8 +76,8 @@ RSpec.describe "User Authentication", type: :system do
         click_button "Delete"
       end
 
-      expect(page).to have_content("Habit deleted successfully!")
-      expect(page).not_to have_content("Test habit to delete")
+      expect(page).to have_content("Habit deleted successfully!", wait: 5)
+      expect(page).not_to have_content("Test habit to delete", wait: 5)
     end
   end
 
@@ -98,7 +98,7 @@ RSpec.describe "User Authentication", type: :system do
       within("#habit_#{habit.id}") do
         click_button "Complete Quest"
       end
-      expect(page).to have_content("Completed Today!")
+      expect(page).to have_content("Completed Today!", wait: 5)
 
       # Undo check-in
       within("#habit_#{habit.id}") do
@@ -106,8 +106,8 @@ RSpec.describe "User Authentication", type: :system do
           click_button "Undo"
         end
       end
-      expect(page).to have_content("Check-in undone!")
-      expect(page).to have_button("Complete Quest")
+      expect(page).to have_content("Check-in undone!", wait: 5)
+      expect(page).to have_button("Complete Quest", wait: 5)
     end
   end
 end

@@ -1,4 +1,5 @@
 require "rails_helper"
+include ActiveSupport::Testing::TimeHelpers
 
 RSpec.describe "CheckIns", type: :request do
   let(:user) { create(:user) }
@@ -11,6 +12,27 @@ RSpec.describe "CheckIns", type: :request do
         post habit_check_ins_path(habit)
       }.to change { habit.check_ins.count }.by(1)
       expect(response).to have_http_status(:redirect)
+    end
+
+    it "does not allow duplicate check-ins for the same day" do
+      sign_in user
+      post habit_check_ins_path(habit)
+      expect {
+        post habit_check_ins_path(habit)
+      }.not_to change { habit.check_ins.count }
+      expect(flash[:alert]).to be_present
+    end
+
+    it "handles check-ins at time zone boundaries" do
+      sign_in user
+      travel_to Time.zone.parse("2024-07-13 23:59:59") do
+        post habit_check_ins_path(habit)
+        expect(habit.check_ins.count).to eq(1)
+      end
+      travel_to Time.zone.parse("2024-07-14 00:00:01") do
+        post habit_check_ins_path(habit)
+        expect(habit.check_ins.count).to eq(2)
+      end
     end
   end
 
