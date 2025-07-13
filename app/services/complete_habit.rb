@@ -1,3 +1,5 @@
+require "ostruct"
+
 class CompleteHabit
   attr_reader :user, :habit, :check_in, :errors
 
@@ -11,7 +13,7 @@ class CompleteHabit
     return failure_result unless valid_inputs?
 
     @check_in = build_check_in
-    
+
     if @check_in.save
       success_result
     else
@@ -20,7 +22,7 @@ class CompleteHabit
   end
 
   def success?
-    @check_in&.persisted?
+    @check_in&.persisted? == true
   end
 
   private
@@ -74,4 +76,4 @@ class CompleteHabit
       errors: @check_in.errors.full_messages
     )
   end
-end 
+end

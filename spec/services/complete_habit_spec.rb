@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe CompleteHabit do
+  include ActiveSupport::Testing::TimeHelpers
   let(:user) { create(:user) }
   let(:habit) { create(:habit, user: user) }
   let(:service) { described_class.new(user: user, habit: habit) }
@@ -19,7 +20,7 @@ RSpec.describe CompleteHabit do
       end
 
       it "sets the checked_in_at timestamp to current time" do
-        freeze_time do
+        travel_to(Time.current) do
           result = service.call
           expect(result.check_in.checked_in_at).to eq(Time.current)
         end
@@ -75,7 +76,7 @@ RSpec.describe CompleteHabit do
 
         expect(result.success?).to be false
         expect(result.check_in).not_to be_persisted
-        expect(result.errors).to include("You have already checked in for this habit today")
+        expect(result.errors).to include("Checked in at You have already checked in for this habit today")
       end
     end
   end
@@ -102,4 +103,4 @@ RSpec.describe CompleteHabit do
       expect(result).to respond_to(:errors)
     end
   end
-end 
+end

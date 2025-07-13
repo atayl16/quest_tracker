@@ -3,19 +3,17 @@ class CheckInsController < ApplicationController
   before_action :set_habit
 
   def create
-    @check_in = @habit.check_ins.build(
-      user: current_user,
-      checked_in_at: Time.current
-    )
+    result = CompleteHabit.new(user: current_user, habit: @habit).call
 
-    if @check_in.save
+    if result.success?
+      @check_in = result.check_in
       respond_to do |format|
         format.html { redirect_to habits_path, notice: "Habit checked in successfully!" }
         format.turbo_stream
       end
     else
       respond_to do |format|
-        format.html { redirect_to habits_path, alert: "Could not check in habit." }
+        format.html { redirect_to habits_path, alert: result.errors.join(", ") }
         format.turbo_stream { head :unprocessable_entity }
       end
     end
