@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   delete "/signout", to: "sessions#destroy"
 
   root "habits#index"
-  resources :habits, only: [ :index ] do
+  resources :habits, only: [ :index, :create ] do
     resources :check_ins, only: [ :create ]
   end
 end

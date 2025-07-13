@@ -15,16 +15,10 @@ RSpec.describe "User Authentication", type: :request do
 
     context "with valid credentials" do
       it "signs in the user and redirects to root" do
-        post signin_path, params: {
-          username: user.username,
-          password: DEFAULT_PASSWORD
-        }
+        post signin_path, params: { username: user.username, password: user.password }
 
-        expect(response).to redirect_to(root_path)
-
-        # Follow the redirect to verify user is signed in
-        follow_redirect!
-        expect(response.body).to include("testuser")
+        expect(session[:user_id]).to eq(user.id)
+        expect(response).to redirect_to(habits_path)
       end
     end
 

@@ -10,7 +10,7 @@
         
         <div class="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-4">
           <!-- Always show completed status after successful check-in -->
-          <div class="flex items-center space-x-2" title="You have completed this habit today" aria-label="Completed today">
+          <div class="flex items-center space-x-2" aria-label="Completed today">
             <span class="text-xs sm:text-sm text-green-400 font-medium" aria-hidden="true">✅</span>
             <span class="text-xs sm:text-sm text-green-400 font-medium">Completed Today!</span>
             <div class="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></div>
@@ -19,10 +19,9 @@
       </div>
 
       <!-- Stats row with badges -->
-      <div class="flex flex-wrap items-center gap-2 sm:gap-3" aria-label="Habit stats for <%= @habit.title %>">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3" aria-label="<%= j("Habit stats for #{@habit.title}") %>">
         <!-- Current Streak -->
         <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-500/20 border border-orange-500/50 text-orange-300"
-             title="Current streak: <%= @habit.current_streak %> day<%= 's' unless @habit.current_streak == 1 %>"
              aria-label="Current streak: <%= @habit.current_streak %> day<%= 's' unless @habit.current_streak == 1 %>">
           <span class="mr-1" aria-hidden="true">🔥</span>
           <span><%= @habit.current_streak %> day<%= 's' unless @habit.current_streak == 1 %> streak</span>
@@ -30,7 +29,6 @@
 
         <!-- Longest Streak -->
         <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-500/20 border border-purple-500/50 text-purple-300"
-             title="Longest streak: <%= @habit.longest_streak %> day<%= 's' unless @habit.longest_streak == 1 %>"
              aria-label="Longest streak: <%= @habit.longest_streak %> day<%= 's' unless @habit.longest_streak == 1 %>">
           <span class="mr-1" aria-hidden="true">🏆</span>
           <span>Best: <%= @habit.longest_streak %> day<%= 's' unless @habit.longest_streak == 1 %></span>
@@ -38,7 +36,6 @@
 
         <!-- Total Check-ins -->
         <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 border border-slate-500/50 text-slate-300"
-             title="Total check-ins: <%= @habit.check_ins.count %>"
              aria-label="Total check-ins: <%= @habit.check_ins.count %>">
           <span class="mr-1" aria-hidden="true">📅</span>
           <span><%= @habit.check_ins.count %> total</span>
