@@ -80,4 +80,34 @@ RSpec.describe "User Authentication", type: :system do
       expect(page).not_to have_content("Test habit to delete")
     end
   end
+
+  describe "check-in undo (uncheck)" do
+    let!(:habit) { create(:habit, user: user, title: "Habit to uncheck") }
+
+    before do
+      # Sign in through the UI
+      visit signin_path
+      fill_in "Username", with: user.username
+      fill_in "Password", with: user.password
+      click_button "Continue Your Quest"
+      expect(page).to have_current_path(habits_path)
+    end
+
+    it "allows user to check in and then undo (uncheck)" do
+      # Check in
+      within("#habit_#{habit.id}") do
+        click_button "Complete Quest"
+      end
+      expect(page).to have_content("Completed Today!")
+
+      # Undo check-in
+      within("#habit_#{habit.id}") do
+        accept_confirm do
+          click_button "Undo"
+        end
+      end
+      expect(page).to have_content("Check-in undone!")
+      expect(page).to have_button("Complete Quest")
+    end
+  end
 end

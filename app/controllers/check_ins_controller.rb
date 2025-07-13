@@ -19,6 +19,20 @@ class CheckInsController < ApplicationController
     end
   end
 
+  def destroy
+    @check_in = @habit.check_ins.find_by(id: params[:id], user: current_user)
+    if @check_in
+      @check_in.destroy
+      @habit.reload
+      respond_to do |format|
+        format.html { redirect_to habits_path, notice: "Check-in undone!" }
+        format.turbo_stream { flash.now[:notice] = "Check-in undone!" }
+      end
+    else
+      head :not_found
+    end
+  end
+
   private
 
   def set_habit

@@ -10,6 +10,6 @@ Rails.application.routes.draw do
 
   root "habits#index"
   resources :habits, only: [ :index, :create, :destroy ] do
-    resources :check_ins, only: [ :create ]
+    resources :check_ins, only: [ :create, :destroy ]
   end
 end

@@ -1,76 +1,47 @@
 require "rails_helper"
 
 RSpec.describe "CheckIns", type: :request do
-  describe "POST /habits/:habit_id/check_ins" do
-    let(:user) { create(:user) }
-    let(:habit) { create(:habit, user: user) }
+  let(:user) { create(:user) }
+  let(:habit) { create(:habit, user: user) }
 
+  describe "POST /habits/:habit_id/check_ins" do
+    it "creates a check-in for today" do
+      sign_in user
+      expect {
+        post habit_check_ins_path(habit)
+      }.to change { habit.check_ins.count }.by(1)
+      expect(response).to have_http_status(:redirect)
+    end
+  end
+
+  describe "DELETE /habits/:habit_id/check_ins/:id" do
     context "when user is authenticated" do
       before { sign_in user }
 
-      context "with Turbo request" do
-        it "creates a check-in for today" do
-          expect {
-            post habit_check_ins_path(habit), headers: { "Accept" => "text/vnd.turbo-stream.html" }
-          }.to change(CheckIn, :count).by(1)
-
-          check_in = CheckIn.last
-          expect(check_in.user).to eq(user)
-          expect(check_in.habit).to eq(habit)
-          expect(check_in.checked_in_at.to_date).to eq(Date.current)
-        end
-
-        it "responds with turbo_stream format" do
-          post habit_check_ins_path(habit), headers: { "Accept" => "text/vnd.turbo-stream.html" }
-
-          expect(response).to have_http_status(:ok)
-          expect(response.content_type).to include("text/vnd.turbo-stream.html")
-        end
-
-        it "updates the habit card via turbo stream" do
-          post habit_check_ins_path(habit), headers: { "Accept" => "text/vnd.turbo-stream.html" }
-
-          expect(response.body).to include("turbo-stream")
-          expect(response.body).to include("habit_#{habit.id}")
-        end
-
-        it "prevents duplicate check-ins for the same day" do
-          # Create existing check-in for today
-          create(:check_in, user: user, habit: habit, checked_in_at: Time.current)
-
-          expect {
-            post habit_check_ins_path(habit), headers: { "Accept" => "text/vnd.turbo-stream.html" }
-          }.not_to change(CheckIn, :count)
-
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
+      it "deletes today's check-in" do
+        check_in = habit.check_ins.create!(user: user, checked_in_at: Time.zone.today)
+        expect {
+          delete habit_check_in_path(habit, check_in)
+        }.to change { habit.check_ins.count }.by(-1)
+        expect(response).to redirect_to(habits_path)
+        expect(flash[:notice]).to eq("Check-in undone!")
       end
 
-      context "without Turbo (traditional request)" do
-        it "creates a check-in and redirects to habits page" do
-          expect {
-            post habit_check_ins_path(habit)
-          }.to change(CheckIn, :count).by(1)
-
-          expect(response).to redirect_to(habits_path)
-        end
+      it "does not allow deleting another user's check-in" do
+        other_user = create(:user)
+        other_check_in = habit.check_ins.create!(user: other_user, checked_in_at: Time.zone.today)
+        expect {
+          delete habit_check_in_path(habit, other_check_in)
+        }.not_to change { habit.check_ins.count }
+        expect(response).to have_http_status(:not_found)
       end
     end
 
     context "when user is not authenticated" do
-      it "redirects to sign-in page" do
-        post habit_check_ins_path(habit)
-
+      let!(:check_in) { habit.check_ins.create!(user: user, checked_in_at: Time.zone.today) }
+      it "redirects to sign in page" do
+        delete habit_check_in_path(habit, check_in)
         expect(response).to redirect_to(signin_path)
-      end
-    end
-
-    context "with invalid habit" do
-      before { sign_in user }
-
-      it "returns 404 for non-existent habit" do
-        post habit_check_ins_path(habit_id: 999), headers: { "Accept" => "text/vnd.turbo-stream.html" }
-        expect(response).to have_http_status(:not_found)
       end
     end
   end

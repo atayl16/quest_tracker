@@ -1,5 +1,6 @@
 <%= turbo_stream.replace "habit_#{@habit.id}" do %>
   <%= render partial: "habits/habit", locals: { habit: @habit } %>
 <% end %>
-
-<%= turbo_stream.remove "habit_#{@habit.id}" if defined?(@deleted) && @deleted %> 
+<%= turbo_stream.update "flash" do %>
+  <%= render "layouts/flash" %>
+<% end %> 

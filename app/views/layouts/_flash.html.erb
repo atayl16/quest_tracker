@@ -1,11 +1,17 @@
 <% if notice %>
-  <div class="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-100 text-center sm:text-left">
+  <div class="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-100 text-center sm:text-left" 
+       role="alert" 
+       aria-live="polite" 
+       aria-label="Success notification">
     <%= notice %>
   </div>
 <% end %>
 
 <% if alert %>
-  <div class="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-100 text-center sm:text-left">
+  <div class="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-100 text-center sm:text-left" 
+       role="alert" 
+       aria-live="assertive" 
+       aria-label="Error notification">
     <%= alert %>
   </div>
 <% end %> 
