@@ -38,3 +38,4 @@
 
 # Internal documentation - never commit to public repos
 agents.md
+node_modules
