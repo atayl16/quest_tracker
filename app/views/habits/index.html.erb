@@ -113,7 +113,8 @@
             <a href="#new-quest-form"
                class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
                aria-label="Begin your first quest"
-               onclick="setTimeout(() => document.querySelector('#new-quest-form input[type=\"text\"]').focus(), 100)">
+               data-turbo="false"
+               onclick="setTimeout(() => { document.querySelector('#new-quest-form input[type=\"text\"]').focus(); }, 100)">
               Begin Your Quest
             </a>
           </div>

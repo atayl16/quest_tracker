@@ -108,4 +108,66 @@ RSpec.describe "User Authentication", type: :system do
       expect(page).to have_button("Complete Quest", wait: 5)
     end
   end
+
+  describe "Begin Your Quest button" do
+    let(:empty_user) { create(:user, username: "empty_user") }
+
+    before do
+      # Ensure the user has no habits
+      empty_user.habits.destroy_all
+
+      # Sign in through the UI
+      visit signin_path
+      fill_in "Username", with: empty_user.username
+      fill_in "Password", with: empty_user.password
+      click_button "Continue Your Quest"
+      expect(page).to have_current_path(habits_path)
+    end
+
+    context "when user has no habits" do
+      it "shows the Begin Your Quest button" do
+        expect(page).to have_link("Begin Your Quest")
+        expect(page).to have_content("No active quests yet")
+      end
+
+      it "scrolls to and focuses the form when Begin Your Quest is clicked" do
+        click_link "Begin Your Quest"
+        # The form should be visible
+        expect(page).to have_field("habit_title")
+      end
+
+      it "allows creating a habit after clicking Begin Your Quest" do
+        click_link "Begin Your Quest"
+
+        fill_in "habit_title", with: "New habit from button"
+        click_button "Create Quest"
+
+        expect(page).to have_content("New habit from button", wait: 5)
+        expect(page).not_to have_link("Begin Your Quest")
+      end
+    end
+
+    context "when user has existing habits" do
+      let!(:habit) { create(:habit, user: empty_user, title: "Existing habit") }
+
+      before do
+        # Sign in through the UI
+        visit signin_path
+        fill_in "Username", with: empty_user.username
+        fill_in "Password", with: empty_user.password
+        click_button "Continue Your Quest"
+        expect(page).to have_current_path(habits_path)
+      end
+
+      it "does not show the Begin Your Quest button" do
+        expect(page).not_to have_button("Begin Your Quest")
+        expect(page).to have_content("Existing habit")
+      end
+
+      it "shows the form directly" do
+        expect(page).to have_field("habit_title")
+        expect(page).to have_button("Create Quest")
+      end
+    end
+  end
 end
