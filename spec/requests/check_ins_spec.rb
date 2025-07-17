@@ -46,7 +46,7 @@ RSpec.describe "CheckIns", type: :request do
           delete habit_check_in_path(habit, check_in)
         }.to change { habit.check_ins.count }.by(-1)
         expect(response).to redirect_to(habits_path)
-        expect(flash[:notice]).to eq("Check-in undone!")
+        expect(response).to have_http_status(:redirect)
       end
 
       it "does not allow deleting another user's check-in" do

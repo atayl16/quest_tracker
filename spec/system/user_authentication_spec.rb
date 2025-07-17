@@ -15,7 +15,7 @@ RSpec.describe "User Authentication", type: :system do
       fill_in "Password", with: user.password
       click_button "Continue Your Quest"
 
-      expect(page).to have_content("Signed in successfully!")
+      expect(page).to have_current_path(habits_path)
       expect(page).to have_current_path(habits_path)
     end
 
@@ -45,7 +45,7 @@ RSpec.describe "User Authentication", type: :system do
       fill_in "habit_title", with: "Drink 8 glasses of water"
       click_button "Create Quest"
 
-      expect(page).to have_content("Habit created successfully!", wait: 5)
+      expect(page).to have_content("Drink 8 glasses of water", wait: 5)
       expect(page).to have_content("Drink 8 glasses of water", wait: 5)
     end
 
@@ -76,7 +76,7 @@ RSpec.describe "User Authentication", type: :system do
       accept_turbo_confirm
       click_button "Abandon"
 
-      expect(page).to have_content("Habit deleted successfully!", wait: 5)
+      expect(page).not_to have_content("Test habit to delete", wait: 5)
       expect(page).not_to have_content("Test habit to delete", wait: 5)
     end
   end
@@ -104,7 +104,7 @@ RSpec.describe "User Authentication", type: :system do
       within("#habit_#{habit.id}") do
         click_button "Undo"
       end
-      expect(page).to have_content("Check-in undone!", wait: 5)
+      expect(page).to have_button("Complete Quest", wait: 5)
       expect(page).to have_button("Complete Quest", wait: 5)
     end
   end

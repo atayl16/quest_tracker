@@ -37,7 +37,7 @@ RSpec.describe "Habits", type: :request do
           }.to change(Habit, :count).by(1)
 
           expect(response).to redirect_to(habits_path)
-          expect(flash[:notice]).to eq("Habit created successfully!")
+          expect(response).to have_http_status(:redirect)
         end
 
         it "associates the habit with the current user" do
@@ -94,7 +94,7 @@ RSpec.describe "Habits", type: :request do
         }.to change(Habit, :count).by(-1)
 
         expect(response).to redirect_to(habits_path)
-        expect(flash[:notice]).to eq("Habit deleted successfully!")
+        expect(response).to have_http_status(:redirect)
       end
 
       it "only allows users to delete their own habits" do

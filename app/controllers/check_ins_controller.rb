@@ -9,7 +9,7 @@ class CheckInsController < ApplicationController
     if result[:success]
       @check_in = result[:check_in]
       respond_to do |format|
-        format.html { redirect_to habits_path, notice: "Habit checked in successfully!" }
+        format.html { redirect_to habits_path }
         format.turbo_stream
         format.json { render json: @check_in, status: :created }
       end
@@ -28,7 +28,7 @@ class CheckInsController < ApplicationController
 
     if result[:success]
       respond_to do |format|
-        format.html { redirect_to habits_path, notice: "Check-in undone!" }
+        format.html { redirect_to habits_path }
         format.turbo_stream { flash.now[:notice] = "Check-in undone!" }
         format.json { head :no_content }
       end

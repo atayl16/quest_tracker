@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
 
     if user
       session[:user_id] = user.id
-      redirect_to habits_path, notice: "Signed in successfully!"
+      redirect_to habits_path
     else
       flash.now[:alert] = "Invalid username or password"
       render :new, status: :unprocessable_entity

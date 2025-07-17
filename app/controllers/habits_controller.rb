@@ -54,7 +54,7 @@ class HabitsController < ApplicationController
 
     respond_to do |format|
       if result[:success]
-        format.html { redirect_to habits_path, notice: "Habit created successfully!" }
+        format.html { redirect_to habits_path }
         format.json { render json: result[:habit], status: :created }
       else
         @habits = adapter.find_habits_for_user(current_user.id)
@@ -73,7 +73,7 @@ class HabitsController < ApplicationController
 
     respond_to do |format|
       if result[:success]
-        format.html { redirect_to habits_path, notice: "Habit deleted successfully!" }
+        format.html { redirect_to habits_path }
         format.turbo_stream { flash.now[:notice] = "Habit deleted successfully!" }
         format.json { head :no_content }
       else
