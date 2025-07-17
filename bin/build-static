@@ -11,6 +11,10 @@ puts "🚀 Building static version of Quest Tracker..."
 # Set production environment
 ENV['RAILS_ENV'] = 'production'
 
+# Precompile assets first
+puts "🎨 Precompiling assets..."
+system('bin/rails assets:precompile') or raise "Failed to precompile assets"
+
 # Create build directory
 build_dir = 'public/static-build'
 FileUtils.rm_rf(build_dir) if Dir.exist?(build_dir)
@@ -28,6 +32,17 @@ FileUtils.cp('public/icon.png', "#{build_dir}/icon.png") if File.exist?('public/
 # Copy JavaScript files
 FileUtils.cp('app/javascript/local_storage_service.js', "#{build_dir}/local_storage_service.js")
 
+# Find and copy the compiled Tailwind CSS file
+puts "🎨 Copying Tailwind CSS..."
+tailwind_files = Dir.glob('public/assets/tailwind-*.css')
+if tailwind_files.any?
+  tailwind_file = tailwind_files.first
+  FileUtils.cp(tailwind_file, "#{build_dir}/tailwind.css")
+  puts "✅ Copied #{tailwind_file} to tailwind.css"
+else
+  puts "⚠️  No compiled Tailwind CSS found in public/assets/"
+end
+
 # Create main HTML file
 puts "📄 Creating main HTML file..."
 
@@ -42,7 +57,7 @@ html_template = <<~HTML
   <link rel="icon" type="image/png" href="icon.png">
   
   <!-- Tailwind CSS -->
-  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="tailwind.css">
   
   <!-- Vite assets -->
   <script type="module" src="vite-dev/assets/application-kKttItdT.js"></script>
