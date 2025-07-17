@@ -31,4 +31,4 @@ class DataAdapter
   def create_user(attributes)
     raise NotImplementedError
   end
-end 
+end

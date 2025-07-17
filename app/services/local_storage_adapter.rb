@@ -8,7 +8,7 @@ class LocalStorageAdapter < DataAdapter
   def create_habit(attributes)
     # This will be handled by JavaScript in production
     if attributes[:title].blank?
-      { success: false, errors: ["Title can't be blank"] }
+      { success: false, errors: [ "Title can't be blank" ] }
     else
       { success: true, habit: { id: SecureRandom.uuid, title: attributes[:title] } }
     end
@@ -32,7 +32,7 @@ class LocalStorageAdapter < DataAdapter
   def find_user_by_credentials(username, password)
     # In production, we'll use a simple demo user
     return nil unless username == "demo" && password == "password"
-    
+
     # Return a mock user object
     OpenStruct.new(
       id: 1,
@@ -45,4 +45,4 @@ class LocalStorageAdapter < DataAdapter
     # In production, we'll use localStorage for user management
     { success: true, user: OpenStruct.new(id: SecureRandom.uuid, username: attributes[:username]) }
   end
-end 
+end

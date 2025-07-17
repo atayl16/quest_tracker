@@ -43,7 +43,7 @@ RSpec.describe "User Authentication", type: :system do
 
     it "allows user to create a new habit" do
       fill_in "habit_title", with: "Drink 8 glasses of water"
-      click_button "Create Habit"
+      click_button "Create Quest"
 
       expect(page).to have_content("Habit created successfully!", wait: 5)
       expect(page).to have_content("Drink 8 glasses of water", wait: 5)
@@ -51,7 +51,7 @@ RSpec.describe "User Authentication", type: :system do
 
     it "shows error when creating habit with empty title" do
       fill_in "habit_title", with: ""
-      click_button "Create Habit"
+      click_button "Create Quest"
 
       expect(page).to have_content("Title can't be blank", wait: 5)
     end
@@ -74,7 +74,7 @@ RSpec.describe "User Authentication", type: :system do
 
       # Accept Turbo confirmation and click delete
       accept_turbo_confirm
-      click_button "Delete"
+      click_button "Abandon"
 
       expect(page).to have_content("Habit deleted successfully!", wait: 5)
       expect(page).not_to have_content("Test habit to delete", wait: 5)
@@ -102,7 +102,6 @@ RSpec.describe "User Authentication", type: :system do
 
       # Undo check-in
       within("#habit_#{habit.id}") do
-        accept_turbo_confirm
         click_button "Undo"
       end
       expect(page).to have_content("Check-in undone!", wait: 5)

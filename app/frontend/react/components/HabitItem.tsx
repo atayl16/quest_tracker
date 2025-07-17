@@ -60,13 +60,12 @@ const HabitItem: React.FC<HabitItemProps> = ({
   };
 
   const handleDelete = () => {
-    if (!window.confirm('Are you sure you want to delete this habit?')) return;
+    if (!window.confirm('Are you sure you want to abandon this quest?')) return;
     executeDelete(() => onDeleteHabit(habit.id));
   };
 
   const handleUndo = () => {
     if (!todaysCheckIn) return;
-    if (!window.confirm("Undo today's check-in?")) return;
     executeUndo(() => onUndoCheckIn(habit.id, todaysCheckIn.id));
   };
 
@@ -145,7 +144,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
               disabled={isDeleting}
               className="ml-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-800 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? 'Abandoning...' : 'Abandon'}
             </button>
           </div>
         </div>

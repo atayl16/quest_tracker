@@ -28,7 +28,7 @@ class HabitsController < ApplicationController
           render "react_index"
         end
       end
-      format.json { 
+      format.json {
         habits_with_streaks = @habits.map do |habit|
           if Rails.env.production?
             # Use localStorage service for streaks in production

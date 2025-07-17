@@ -18,35 +18,6 @@
           My Active Quests
         </h2>
 
-        <!-- Add New Habit Form -->
-        <div class="mb-8 p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30" id="new-habit-form">
-          <h3 class="text-lg font-medium text-white mb-4 flex items-center">
-            <span class="text-green-400 mr-2" aria-hidden="true">✨</span>
-            Add New Quest
-          </h3>
-          
-          <%= form_with model: Habit.new, local: true, class: "space-y-4" do |form| %>
-            <div class="flex flex-col sm:flex-row gap-3">
-              <div class="flex-1">
-                <%= form.text_field :title, 
-                    placeholder: "Enter your new habit quest...",
-                    class: "w-full px-4 py-3 bg-slate-600/50 border border-slate-500/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200",
-                    aria: { label: "New habit title" } %>
-                <% if @habit&.errors&.any? %>
-                  <div class="mt-2 text-red-400 text-sm">
-                    <% @habit.errors.full_messages_for(:title).each do |message| %>
-                      <p><%= message %></p>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-              <%= form.submit "Create Habit", 
-                  class: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 whitespace-nowrap",
-                  aria: { label: "Create new habit" } %>
-            </div>
-          <% end %>
-        </div>
-        
         <% if @habits.any? %>
           <div class="space-y-4">
             <% @habits.each do |habit| %>
@@ -69,7 +40,7 @@
                             <div class="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></div>
                             <% check_in = habit.todays_check_in_for_user(current_user) %>
                             <% if check_in %>
-                              <%= button_to "Undo", habit_check_in_path(habit, check_in), method: :delete, data: { turbo_confirm: "Undo today's check-in?" }, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-slate-600 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
+                              <%= button_to "Undo", habit_check_in_path(habit, check_in), method: :delete, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-slate-600 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
                             <% end %>
                           </div>
                         <% else %>
@@ -89,9 +60,9 @@
                             <% end %>
                           </div>
                         <% end %>
-                        <!-- Delete button -->
+                        <!-- Abandon button -->
                         <% if habit.persisted? %>
-                          <%= button_to "Delete", habit_path(habit), method: :delete, data: { turbo_confirm: "Are you sure?" }, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
+                          <%= button_to "Abandon", habit_path(habit), method: :delete, data: { turbo_confirm: "Are you sure you want to abandon this quest?" }, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
                         <% end %>
                       </div>
                     </div>
@@ -132,14 +103,43 @@
             <div class="text-4xl sm:text-6xl mb-4" role="img" aria-label="Castle">🏰</div>
             <h3 class="text-lg sm:text-xl font-medium text-slate-300 mb-2">No active quests yet</h3>
             <p class="text-slate-400 mb-6 text-sm sm:text-base">Start your journey by creating your first habit quest!</p>
-            <a href="#new-habit-form"
+            <a href="#new-quest-form"
                class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
                aria-label="Begin your first quest"
-               onclick="setTimeout(() => document.querySelector('#new-habit-form input[type=\"text\"]').focus(), 100)">
+               onclick="setTimeout(() => document.querySelector('#new-quest-form input[type=\"text\"]').focus(), 100)">
               Begin Your Quest
             </a>
           </div>
         <% end %>
+        
+        <!-- Add New Quest Form -->
+        <div class="mt-8 p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30" id="new-quest-form">
+          <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+            <span class="text-green-400 mr-2" aria-hidden="true">✨</span>
+            Add New Quest
+          </h3>
+          
+          <%= form_with model: Habit.new, local: true, class: "space-y-4" do |form| %>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="flex-1">
+                <%= form.text_field :title, 
+                    placeholder: "Enter your new quest...",
+                    class: "w-full px-4 py-3 bg-slate-600/50 border border-slate-500/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200",
+                    aria: { label: "New quest title" } %>
+                <% if @habit&.errors&.any? %>
+                  <div class="mt-2 text-red-400 text-sm">
+                    <% @habit.errors.full_messages_for(:title).each do |message| %>
+                      <p><%= message %></p>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              <%= form.submit "Create Quest", 
+                  class: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 whitespace-nowrap",
+                  aria: { label: "Create new quest" } %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </main>
 

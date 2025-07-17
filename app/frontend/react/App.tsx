@@ -17,7 +17,7 @@ const App: React.FC = () => {
   const fetchHabits = async () => {
     try {
       setLoading(true);
-      console.log('Fetching habits from /habits.json...');
+      console.log('Fetching quests from /habits.json...');
       const response = await fetch('/habits.json');
       console.log('Response status:', response.status);
       console.log('Response headers:', response.headers);
@@ -25,11 +25,11 @@ const App: React.FC = () => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Response error:', errorText);
-        throw new Error(`Failed to fetch habits: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to fetch quests: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
-      console.log('Fetched habits:', data);
+      console.log('Fetched quests:', data);
       setHabits(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching habits:', err);
@@ -54,7 +54,7 @@ const App: React.FC = () => {
       const newHabit = await response.json();
       setHabits(prev => [...prev, newHabit]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create habit');
+      setError(err instanceof Error ? err.message : 'Failed to create quest');
     }
   };
 
@@ -70,7 +70,7 @@ const App: React.FC = () => {
       if (!response.ok) throw new Error('Failed to delete habit');
       setHabits(prev => prev.filter(habit => habit.id !== habitId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete habit');
+      setError(err instanceof Error ? err.message : 'Failed to delete quest');
     }
   };
 
@@ -94,7 +94,7 @@ const App: React.FC = () => {
           : habit
       ));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to check in habit');
+      setError(err instanceof Error ? err.message : 'Failed to complete quest');
     }
   };
 
@@ -116,7 +116,7 @@ const App: React.FC = () => {
           : habit
       ));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to undo check-in');
+      setError(err instanceof Error ? err.message : 'Failed to undo quest completion');
     }
   };
 
@@ -128,7 +128,7 @@ const App: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading your quests...</div>
+        <div className="text-white text-xl">Preparing your quest log...</div>
       </div>
     );
   }
@@ -151,8 +151,6 @@ const App: React.FC = () => {
             <span className="text-purple-400 mr-3" aria-hidden="true">⚔️</span>
             My Active Quests
           </h2>
-
-          <NewHabitForm onCreateHabit={createHabit} />
           
           <HabitList 
             habits={habits}
@@ -160,6 +158,8 @@ const App: React.FC = () => {
             onCheckInHabit={checkInHabit}
             onUndoCheckIn={undoCheckIn}
           />
+          
+          <NewHabitForm onCreateHabit={createHabit} />
         </div>
       </main>
 

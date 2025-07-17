@@ -7,14 +7,14 @@ class DatabaseAdapter < DataAdapter
   def create_habit(attributes)
     user = User.find(attributes[:user_id])
     habit = user.habits.build(title: attributes[:title])
-    
+
     if habit.save
       { success: true, habit: habit }
     else
       { success: false, errors: habit.errors.full_messages }
     end
   rescue ActiveRecord::RecordNotFound
-    { success: false, errors: ["User not found"] }
+    { success: false, errors: [ "User not found" ] }
   end
 
   def delete_habit(habit_id, user_id)
@@ -27,13 +27,13 @@ class DatabaseAdapter < DataAdapter
 
   def create_check_in(habit_id, user_id)
     habit = User.find(user_id).habits.find(habit_id)
-    
+
     # Check if already checked in today
     existing_check_in = habit.check_ins.find_by(
       user_id: user_id,
       checked_in_at: Time.zone.today.all_day
     )
-    
+
     if existing_check_in
       { success: false, error: "Already checked in today" }
     else
@@ -52,7 +52,7 @@ class DatabaseAdapter < DataAdapter
       id: check_in_id,
       user_id: user_id
     ).first
-    
+
     if check_in
       check_in.destroy
       { success: true }
@@ -69,11 +69,11 @@ class DatabaseAdapter < DataAdapter
 
   def create_user(attributes)
     user = User.new(attributes)
-    
+
     if user.save
       { success: true, user: user }
     else
       { success: false, errors: user.errors.full_messages }
     end
   end
-end 
+end

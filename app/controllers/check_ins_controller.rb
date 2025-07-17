@@ -17,7 +17,7 @@ class CheckInsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to habits_path, alert: result[:error] }
         format.turbo_stream { head :unprocessable_entity }
-        format.json { render json: { errors: [result[:error]] }, status: :unprocessable_entity }
+        format.json { render json: { errors: [ result[:error] ] }, status: :unprocessable_entity }
       end
     end
   end
@@ -46,7 +46,7 @@ class CheckInsController < ApplicationController
     adapter = DataAdapter.current
     @habits = adapter.find_habits_for_user(current_user.id)
     @habit = @habits.find { |h| h.id.to_s == params[:habit_id] }
-    
+
     unless @habit
       redirect_to habits_path, alert: "Habit not found"
     end

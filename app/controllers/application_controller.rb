@@ -9,8 +9,8 @@ class ApplicationController < ActionController::Base
         # In production, use localStorage service
         @current_user ||= OpenStruct.new(
           id: session[:user_id],
-          username: 'demo',
-          email: 'demo@example.com'
+          username: "demo",
+          email: "demo@example.com"
         )
       else
         # In development, use database
