@@ -14,7 +14,7 @@
             <span class="text-xs sm:text-sm text-green-400 font-medium" aria-hidden="true">✅</span>
             <span class="text-xs sm:text-sm text-green-400 font-medium">Completed Today!</span>
             <div class="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></div>
-            <% check_in = habit.check_ins.find_by(user: current_user, checked_in_at: Time.zone.today.all_day) %>
+            <% check_in = habit.todays_check_in_for_user(current_user) %>
             <% if check_in %>
               <%= button_to "Undo", habit_check_in_path(habit, check_in), method: :delete, data: { turbo_confirm: "Undo today's check-in?" }, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-slate-600 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
             <% end %>
@@ -36,8 +36,8 @@
             <% end %>
           </div>
         <% end %>
-        <!-- Delete button for habit owner -->
-        <% if habit.user == current_user && habit.persisted? %>
+        <!-- Delete button -->
+        <% if habit.persisted? %>
           <%= button_to "Delete", habit_path(habit), method: :delete, data: { turbo_confirm: "Are you sure?" }, form: { data: { turbo_frame: "habit_#{habit.id}" } }, class: "ml-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200" %>
         <% end %>
       </div>
@@ -60,10 +60,10 @@
       </div>
       <!-- Total Check-ins -->
       <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 border border-slate-500/50 text-slate-300"
-           title="Total check-ins: <%= habit.check_ins.count %>"
-           aria-label="Total check-ins: <%= habit.check_ins.count %>">
+           title="Total check-ins: <%= habit.check_ins.size %>"
+           aria-label="Total check-ins: <%= habit.check_ins.size %>">
         <span class="mr-1" aria-hidden="true">📅</span>
-        <span><%= habit.check_ins.count %> total</span>
+        <span><%= habit.check_ins.size %> total</span>
       </div>
     </div>
   </div>

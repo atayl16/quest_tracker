@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Start Rails server and Vite dev server in parallel for development
+
+# Start Rails server on port 3000
+bin/rails server &
+RAILS_PID=$!
+
+# Start Vite dev server
+bundle exec vite dev &
+VITE_PID=$!
+
+# Trap Ctrl+C and kill both processes
+trap "kill $RAILS_PID $VITE_PID" SIGINT
+
+wait 

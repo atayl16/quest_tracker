@@ -17,6 +17,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
+gem "vite_rails"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

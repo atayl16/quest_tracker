@@ -84,4 +84,21 @@ RSpec.describe Habit, type: :model do
       expect(habit.completed_today?).to be true
     end
   end
+
+  describe "#todays_check_in_for_user" do
+    it "returns the check-in for today and user if it exists" do
+      check_in = create(:check_in, habit: habit, user: user, checked_in_at: Time.current)
+      expect(habit.todays_check_in_for_user(user)).to eq(check_in)
+    end
+
+    it "returns nil if there is no check-in for today" do
+      expect(habit.todays_check_in_for_user(user)).to be_nil
+    end
+
+    it "returns nil if there is no check-in for that user" do
+      other_user = create(:user)
+      create(:check_in, habit: habit, user: other_user, checked_in_at: Time.current)
+      expect(habit.todays_check_in_for_user(user)).to be_nil
+    end
+  end
 end
