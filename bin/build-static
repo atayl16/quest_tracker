@@ -8,8 +8,8 @@ require 'erb'
 
 puts "🚀 Building static version of Quest Tracker..."
 
-# Set production environment
-ENV['RAILS_ENV'] = 'production'
+# Set development environment for asset compilation (avoids production credentials)
+ENV['RAILS_ENV'] = 'development'
 
 # Precompile assets first
 puts "🎨 Precompiling assets..."
