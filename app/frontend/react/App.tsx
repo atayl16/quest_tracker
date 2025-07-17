@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Habit, CheckIn } from './types';
 import HabitList from './components/HabitList';
 import NewHabitForm from './components/NewHabitForm';
-import Footer from './components/Footer';
 
 const App: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -126,7 +125,7 @@ const App: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-white text-xl">Preparing your quest log...</div>
       </div>
     );
@@ -134,15 +133,15 @@ const App: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-red-400 text-xl">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <main className="max-w-4xl mx-auto px-4 py-8" aria-labelledby="active-quests-heading">
+    <div>
+      <main className="max-w-4xl mx-auto" aria-labelledby="active-quests-heading">
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-4 sm:p-6 md:p-8">
           <h2 id="active-quests-heading" className="text-xl sm:text-2xl font-semibold text-white mb-6 flex items-center">
             <span className="text-purple-400 mr-3" aria-hidden="true">⚔️</span>
@@ -160,7 +159,9 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      <footer className="text-center mt-12">
+        <p className="text-slate-500 text-sm">Level up your life, one habit at a time</p>
+      </footer>
     </div>
   );
 };
