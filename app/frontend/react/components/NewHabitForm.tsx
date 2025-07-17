@@ -24,7 +24,7 @@ const NewHabitForm: React.FC<NewHabitFormProps> = ({ onCreateHabit }) => {
   };
 
   return (
-    <div className="mt-8 p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30" id="new-quest-form">
+    <div className="p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30" id="new-quest-form">
       <h3 className="text-lg font-medium text-white mb-4 flex items-center">
         <span className="text-green-400 mr-2" aria-hidden="true">✨</span>
         Add New Quest

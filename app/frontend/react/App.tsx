@@ -155,7 +155,9 @@ const App: React.FC = () => {
             onUndoCheckIn={undoCheckIn}
           />
           
-          <NewHabitForm onCreateHabit={createHabit} />
+          <div className="mt-8">
+            <NewHabitForm onCreateHabit={createHabit} />
+          </div>
         </div>
       </main>
 
