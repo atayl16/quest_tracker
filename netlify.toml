@@ -1,0 +1,11 @@
+[build]
+  command = "bin/build-static"
+  publish = "public/static-build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
