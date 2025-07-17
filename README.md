@@ -24,6 +24,7 @@
   - All data (users, habits, check-ins) is stored in the browser's localStorage
   - No backend/database required
   - Works offline and persists between sessions
+  - **Only the Turbo (Hotwire) UI is included in the static build. The React UI is NOT included in the static build.**
 
 - **Demo credentials:**
   - Username: `demo`
@@ -35,8 +36,10 @@
 
 - **Turbo UI:** `/habits` (default)
   - Classic Rails+Hotwire experience
+  - **Included in static build**
 - **React UI:** `/habits?ui=react`
   - Modern React SPA, powered by Vite
+  - **Not included in static build**
 
 Both UIs share the same backend and data model in development. In static/demo mode, all data is local to the browser.
 
@@ -175,17 +178,21 @@ bin/rails assets:precompile
 
 ### ✅ Completed Features
 - [x] User authentication system
-- [x] Habit creation and management
+- [x] Habit creation and management ("quest" creation)
 - [x] Daily check-in functionality
 - [x] Streak tracking and analytics
 - [x] Service object architecture
-- [x] Comprehensive test suite
-- [x] Responsive design
+- [x] Comprehensive test suite (models, services, requests, system specs)
+- [x] Responsive, gamified UI (Turbo/Hotwire)
 - [x] Turbo Stream real-time updates
-- [x] Code quality enforcement
+- [x] Code quality enforcement (RuboCop, Tailwind)
+- [x] Static build for Netlify/static hosting (Turbo UI only, localStorage persistence)
+- [x] Static build validation spec (catches JS/HTML errors before deployment)
+- [x] Demo data and credentials in seeds
+- [x] All major user flows tested and passing (auth, quest creation, check-in, undo, deletion, UI switching)
+- [x] README and deployment instructions up to date
 
 ### 🚧 In Progress
-- [ ] Habit creation interface
 - [ ] User profile management
 - [ ] Advanced analytics dashboard
 
@@ -198,7 +205,7 @@ bin/rails assets:precompile
 - [ ] Email reminders and notifications
 
 #### Advanced Features
-- [ ] React frontend with JSON API
+- [ ] React frontend with JSON API (for future, not in static build)
 - [ ] Mobile app with React Native
 - [ ] Social features and habit sharing
 - [ ] Advanced analytics and insights
