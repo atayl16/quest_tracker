@@ -3,9 +3,10 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(username: params[:username])
+    adapter = DataAdapter.current
+    user = adapter.find_user_by_credentials(params[:username], params[:password])
 
-    if user&.authenticate(params[:password])
+    if user
       session[:user_id] = user.id
       redirect_to habits_path, notice: "Signed in successfully!"
     else

@@ -1,5 +1,47 @@
 # Quest Tracker 🏰
 
+> **Now with static demo mode!**
+>
+> 🚀 Easily deploy a fully working demo for recruiters—no backend required. All data is stored in the browser using localStorage. See below for details.
+
+---
+
+## 🌐 Static Demo/Production Deployment
+
+**Want recruiters to see your app live, instantly, with no server/database setup?**
+
+- **Build a static version:**
+  ```bash
+  bin/build-static
+  ```
+  This creates a `public/static-build/` directory with everything needed for a live demo.
+
+- **Deploy anywhere:**
+  - Netlify, Vercel, GitHub Pages, S3, or any static host
+  - Just upload the contents of `public/static-build/`
+
+- **How it works:**
+  - All data (users, habits, check-ins) is stored in the browser's localStorage
+  - No backend/database required
+  - Works offline and persists between sessions
+
+- **Demo credentials:**
+  - Username: `demo`
+  - Password: `password`
+
+---
+
+## 🖥️ Dual UI: Turbo (Rails) & React
+
+- **Turbo UI:** `/habits` (default)
+  - Classic Rails+Hotwire experience
+- **React UI:** `/habits?ui=react`
+  - Modern React SPA, powered by Vite
+
+Both UIs share the same backend and data model in development. In static/demo mode, all data is local to the browser.
+
+---
+
 A beautiful, gamified habit tracking application built with Ruby on Rails and Tailwind CSS. Transform your daily habits into epic quests and track your progress with streaks, completion rates, and visual feedback.
 
 ![Quest Tracker](https://img.shields.io/badge/Rails-7.1+-red.svg)

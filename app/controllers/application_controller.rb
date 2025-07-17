@@ -4,7 +4,19 @@ class ApplicationController < ActionController::Base
 
   # Session-based authentication
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+    if session[:user_id]
+      if Rails.env.production?
+        # In production, use localStorage service
+        @current_user ||= OpenStruct.new(
+          id: session[:user_id],
+          username: 'demo',
+          email: 'demo@example.com'
+        )
+      else
+        # In development, use database
+        @current_user ||= User.find_by(id: session[:user_id])
+      end
+    end
   end
   helper_method :current_user
 

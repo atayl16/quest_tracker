@@ -1,0 +1,344 @@
+#!/usr/bin/env ruby
+
+# Build static version of Quest Tracker for production deployment
+# This creates a standalone HTML/JS/CSS bundle that can be deployed anywhere
+
+require 'fileutils'
+require 'erb'
+
+puts "🚀 Building static version of Quest Tracker..."
+
+# Set production environment
+ENV['RAILS_ENV'] = 'production'
+
+# Create build directory
+build_dir = 'public/static-build'
+FileUtils.rm_rf(build_dir) if Dir.exist?(build_dir)
+FileUtils.mkdir_p(build_dir)
+
+# Copy assets
+puts "📦 Copying assets..."
+FileUtils.cp_r('public/assets', "#{build_dir}/assets") if Dir.exist?('public/assets')
+FileUtils.cp_r('public/vite-dev', "#{build_dir}/vite-dev") if Dir.exist?('public/vite-dev')
+
+# Copy JavaScript files
+FileUtils.cp('app/javascript/local_storage_service.js', "#{build_dir}/local_storage_service.js")
+
+# Create main HTML file
+puts "📄 Creating main HTML file..."
+
+html_template = <<~HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quest Tracker - Habit Building App</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A beautiful habit tracking app built with Rails, Hotwire, and React">
+  
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="assets/app.css">
+  
+  <!-- Vite assets -->
+  <script type="module" src="vite-dev/assets/application-kKttItdT.js"></script>
+  
+  <!-- LocalStorage Service -->
+  <script src="local_storage_service.js"></script>
+  
+  <style>
+    /* Custom styles for static build */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div id="flash"></div>
+    <div class="container mx-auto px-4 py-8">
+      <div id="app">
+        <!-- React app will be mounted here -->
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Initialize localStorage service
+    const storageService = new LocalStorageService();
+    
+    // Check if user is authenticated
+    const currentUser = storageService.getCurrentUser();
+    
+    if (!currentUser) {
+      // Show login form
+      document.getElementById('app').innerHTML = `
+        <div class="text-center">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
+            Quest Tracker
+          </h1>
+          <p class="text-slate-300 text-base sm:text-lg mb-8">Your personal journey to building better habits</p>
+          
+          <div class="max-w-md mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6">
+            <h2 class="text-xl font-semibold text-white mb-6">Sign In</h2>
+            <form id="login-form" class="space-y-4">
+              <div>
+                <label class="block text-slate-300 text-sm font-medium mb-2">Username</label>
+                <input type="text" id="username" value="demo" class="w-full px-4 py-3 bg-slate-600/50 border border-slate-500/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+              </div>
+              <div>
+                <label class="block text-slate-300 text-sm font-medium mb-2">Password</label>
+                <input type="password" id="password" value="password" class="w-full px-4 py-3 bg-slate-600/50 border border-slate-500/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+              </div>
+              <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200">
+                Continue Your Quest
+              </button>
+            </form>
+            <p class="text-slate-400 text-sm mt-4 text-center">
+              Demo credentials: demo / password
+            </p>
+          </div>
+        </div>
+      `;
+      
+      // Handle login
+      document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        const result = storageService.authenticateUser(username, password);
+        if (result.success) {
+          window.location.reload();
+        } else {
+          alert('Invalid credentials. Use demo/password');
+        }
+      });
+    } else {
+      // User is authenticated, show the main app
+      document.getElementById('app').innerHTML = `
+        <div>
+          <header class="text-center mb-8 sm:mb-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
+              Quest Tracker
+            </h1>
+            <p class="text-slate-300 text-base sm:text-lg">Your personal journey to building better habits</p>
+            <p class="text-purple-300 text-sm mt-2">Welcome back, ${currentUser.username}!</p>
+          </header>
+          
+          <main class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-4 sm:p-6 md:p-8">
+              <h2 class="text-xl sm:text-2xl font-semibold text-white mb-6 flex items-center">
+                <span class="text-purple-400 mr-3">⚔️</span>
+                My Active Quests
+              </h2>
+              
+              <div id="habits-container">
+                <!-- Habits will be loaded here -->
+              </div>
+            </div>
+          </main>
+          
+          <footer class="text-center mt-12">
+            <p class="text-slate-500 text-sm">Level up your life, one habit at a time</p>
+            <button onclick="logout()" class="text-slate-400 hover:text-white text-sm mt-2">Sign Out</button>
+          </footer>
+        </div>
+      `;
+      
+      // Load and display habits
+      loadHabits();
+    }
+    
+    function loadHabits() {
+      const habits = storageService.getHabitsForUser(currentUser.id);
+      const container = document.getElementById('habits-container');
+      
+      if (habits.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 sm:py-12">
+            <div class="text-4xl sm:text-6xl mb-4">🏰</div>
+            <h3 class="text-lg sm:text-xl font-medium text-slate-300 mb-2">No active quests yet</h3>
+            <p class="text-slate-400 mb-6 text-sm sm:text-base">Start your journey by creating your first habit quest!</p>
+            <button onclick="showNewHabitForm()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 text-sm sm:text-base">
+              Begin Your Quest
+            </button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="mb-8 p-4 sm:p-6 bg-slate-700/20 rounded-xl border border-slate-600/30">
+            <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+              <span class="text-green-400 mr-2">✨</span>
+              Add New Quest
+            </h3>
+            <form id="new-habit-form" class="space-y-4">
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1">
+                  <input type="text" id="habit-title" placeholder="Enter your new habit quest..." class="w-full px-4 py-3 bg-slate-600/50 border border-slate-500/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                </div>
+                <button type="submit" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 whitespace-nowrap">
+                  Create Habit
+                </button>
+              </div>
+            </form>
+          </div>
+          <div id="habits-list" class="space-y-4">
+            ${habits.map(habit => renderHabit(habit)).join('')}
+          </div>
+        `;
+        
+        // Handle new habit form
+        document.getElementById('new-habit-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          const title = document.getElementById('habit-title').value;
+          if (title.trim()) {
+            const result = storageService.createHabit({
+              title: title.trim(),
+              user_id: currentUser.id
+            });
+            if (result.success) {
+              document.getElementById('habit-title').value = '';
+              loadHabits();
+            }
+          }
+        });
+      }
+    }
+    
+    function renderHabit(habit) {
+      const streaks = storageService.calculateStreaks(habit.id, currentUser.id);
+      const isCompletedToday = storageService.isCompletedToday(habit.id, currentUser.id);
+      const todaysCheckIn = storageService.getTodaysCheckIn(habit.id, currentUser.id);
+      
+      return `
+        <section class="bg-slate-700/30 rounded-xl p-4 sm:p-6 border border-slate-600/30 hover:border-purple-500/50 transition-all duration-300">
+          <div class="flex flex-col space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+              <div class="flex items-center">
+                <div class="w-3 h-3 bg-purple-500 rounded-full mr-4"></div>
+                <h3 class="text-lg font-medium text-white">${habit.title}</h3>
+              </div>
+              
+              <div class="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-4">
+                ${isCompletedToday ? `
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs sm:text-sm text-green-400 font-medium">✅</span>
+                    <span class="text-xs sm:text-sm text-green-400 font-medium">Completed Today!</span>
+                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    ${todaysCheckIn ? `<button onclick="undoCheckIn('${todaysCheckIn.id}')" class="ml-2 bg-slate-600 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200">Undo</button>` : ''}
+                  </div>
+                ` : `
+                  <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                    <span class="text-xs sm:text-sm text-slate-400">Ready to complete</span>
+                    <button onclick="checkInHabit('${habit.id}')" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg transition-all duration-200 transform hover:scale-105 text-xs sm:text-sm">
+                      Complete Quest
+                    </button>
+                  </div>
+                `}
+                <button onclick="deleteHabit('${habit.id}')" class="ml-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold py-2 px-3 rounded-lg transition-all duration-200">Delete</button>
+              </div>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+              <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-500/20 border border-orange-500/50 text-orange-300">
+                <span class="mr-1">🔥</span>
+                <span>${streaks.current_streak} day${streaks.current_streak !== 1 ? 's' : ''} streak</span>
+              </div>
+              <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-500/20 border border-purple-500/50 text-purple-300">
+                <span class="mr-1">🏆</span>
+                <span>Best: ${streaks.longest_streak} day${streaks.longest_streak !== 1 ? 's' : ''}</span>
+              </div>
+              <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-500/20 border border-slate-500/50 text-slate-300">
+                <span class="mr-1">📅</span>
+                <span>${habit.check_ins.length} total</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+    
+    function checkInHabit(habitId) {
+      const result = storageService.createCheckIn(habitId, currentUser.id);
+      if (result.success) {
+        loadHabits();
+      } else {
+        alert(result.error);
+      }
+    }
+    
+    function undoCheckIn(checkInId) {
+      if (confirm("Undo today's check-in?")) {
+        const result = storageService.deleteCheckIn(checkInId, currentUser.id);
+        if (result.success) {
+          loadHabits();
+        } else {
+          alert(result.error);
+        }
+      }
+    }
+    
+    function deleteHabit(habitId) {
+      if (confirm("Are you sure?")) {
+        const result = storageService.deleteHabit(habitId, currentUser.id);
+        if (result.success) {
+          loadHabits();
+        } else {
+          alert(result.error);
+        }
+      }
+    }
+    
+    function logout() {
+      storageService.logout();
+      window.location.reload();
+    }
+  </script>
+</body>
+</html>
+HTML
+
+File.write("#{build_dir}/index.html", html_template)
+
+# Create README for deployment
+readme_content = <<~README
+# Quest Tracker - Static Build
+
+This is a static build of the Quest Tracker habit tracking app.
+
+## Demo Credentials
+- Username: demo
+- Password: password
+
+## Features
+- Create and track daily habits
+- View current and longest streaks
+- Check in and undo check-ins
+- Beautiful, responsive UI
+- Works offline (data stored in localStorage)
+
+## Deployment
+Simply upload all files in this directory to any static hosting service:
+- Netlify
+- Vercel
+- GitHub Pages
+- AWS S3
+- Any web server
+
+## How it Works
+- All data is stored in the browser's localStorage
+- No server required
+- Works completely offline
+- Data persists between sessions
+
+## Development
+For development with full Rails backend, see the main repository.
+README
+
+File.write("#{build_dir}/README.md", readme_content)
+
+puts "✅ Static build complete!"
+puts "📁 Build directory: #{build_dir}"
+puts "🌐 Deploy the contents of #{build_dir} to any static hosting service"
+puts "🔑 Demo credentials: demo / password" 
