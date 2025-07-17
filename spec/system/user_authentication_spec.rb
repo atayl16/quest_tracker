@@ -72,9 +72,9 @@ RSpec.describe "User Authentication", type: :system do
     it "allows user to delete a habit" do
       expect(page).to have_content("Test habit to delete")
 
-      accept_confirm do
-        click_button "Delete"
-      end
+      # Accept Turbo confirmation and click delete
+      accept_turbo_confirm
+      click_button "Delete"
 
       expect(page).to have_content("Habit deleted successfully!", wait: 5)
       expect(page).not_to have_content("Test habit to delete", wait: 5)
@@ -102,9 +102,8 @@ RSpec.describe "User Authentication", type: :system do
 
       # Undo check-in
       within("#habit_#{habit.id}") do
-        accept_confirm do
-          click_button "Undo"
-        end
+        accept_turbo_confirm
+        click_button "Undo"
       end
       expect(page).to have_content("Check-in undone!", wait: 5)
       expect(page).to have_button("Complete Quest", wait: 5)
