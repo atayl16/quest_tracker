@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Habit, CheckIn } from './types';
 import HabitList from './components/HabitList';
 import NewHabitForm from './components/NewHabitForm';
-import Header from './components/Header';
 import Footer from './components/Footer';
 
 const App: React.FC = () => {
@@ -143,8 +142,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
-      <Header />
-      
       <main className="max-w-4xl mx-auto px-4 py-8" aria-labelledby="active-quests-heading">
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-4 sm:p-6 md:p-8">
           <h2 id="active-quests-heading" className="text-xl sm:text-2xl font-semibold text-white mb-6 flex items-center">
